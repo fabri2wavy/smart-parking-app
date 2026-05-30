@@ -1,18 +1,32 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, Switch } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, Switch, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useAuthStore } from '../../store/useAuthStore';
+import { supabase } from '../../lib/supabase';
 
-export default function SettingsScreen() {
+export default function ProfileScreen() {
   const { userPlate, clearSession } = useAuthStore();
   const router = useRouter();
-  const [notifications, setNotifications] = React.useState(true);
-  const [darkMode, setDarkMode] = React.useState(true);
+  const [notifications, setNotifications] = useState(true);
+  const [darkMode, setDarkMode] = useState(true);
 
-  const handleLogout = () => {
-    clearSession();
-    router.replace('/');
+  const handleLogout = async () => {
+    Alert.alert('Cerrar Sesión', '¿Estás seguro que deseas salir?', [
+      { text: 'Cancelar', style: 'cancel' },
+      { 
+        text: 'Salir', 
+        style: 'destructive',
+        onPress: async () => {
+          // Desloguear de Supabase
+          await supabase.auth.signOut();
+          // Limpiar el estado local de Zustand
+          clearSession();
+          // Redirigir al login
+          router.replace('/(auth)/login');
+        }
+      }
+    ]);
   };
 
   return (
@@ -29,13 +43,13 @@ export default function SettingsScreen() {
         </View>
 
         {/* Profile Card */}
-        <View className="bg-slate-900 border border-slate-800 rounded-3xl p-5 mb-8 flex-row items-center">
+        <View className="bg-slate-900 border border-slate-800 rounded-3xl p-5 mb-8 flex-row items-center shadow-lg shadow-black/40">
           <View className="w-16 h-16 bg-indigo-600 rounded-full justify-center items-center mr-4">
             <FontAwesome name="user" size={28} color="#ffffff" />
           </View>
           <View className="flex-1">
-            <Text className="text-white font-bold text-lg">Conductor</Text>
-            <Text className="text-slate-400 text-xs mt-1">Placa: {userPlate || 'Sin registrar'}</Text>
+            <Text className="text-white font-bold text-lg">Conductor Prueba</Text>
+            <Text className="text-slate-400 text-xs mt-1">Placa: <Text className="font-bold text-indigo-300">{userPlate || 'SIN-PLACA'}</Text></Text>
           </View>
         </View>
 
@@ -108,7 +122,7 @@ export default function SettingsScreen() {
         {/* Logout Button */}
         <TouchableOpacity
           onPress={handleLogout}
-          className="w-full bg-slate-900 border border-rose-500/20 py-4 rounded-2xl flex-row justify-center items-center mb-12"
+          className="w-full bg-slate-900 border border-rose-500/30 py-4 rounded-2xl flex-row justify-center items-center mb-12 shadow-sm shadow-rose-900/20"
           activeOpacity={0.8}
         >
           <FontAwesome name="sign-out" size={18} color="#f43f5e" className="mr-2" />

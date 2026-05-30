@@ -9,3 +9,6 @@ const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL as string;
 const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY as string;
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+console.log('🔍 Supabase URL:', SUPABASE_URL);
+console.log('🔑 Supabase Anon Key:', SUPABASE_ANON_KEY ? 'Cargada ✅' : 'No cargada ❌');

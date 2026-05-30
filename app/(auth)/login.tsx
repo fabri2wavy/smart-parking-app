@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/useAuthStore';
+
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function LoginScreen() {
 
   // Requerimiento: R2 (Iniciar Sesión) y R4 (Validar Campos)
   const handleLogin = async () => {
+    console.log("¡El botón funciona!"); // <-- Agrega esto
     if (!email || !password) {
       Alert.alert('Error', 'Por favor ingresa tu correo y contraseña');
       return;
@@ -106,6 +108,21 @@ export default function LoginScreen() {
             ¿No tienes cuenta? <Text className="font-bold">Regístrate</Text>
           </Text>
         </TouchableOpacity>
+
+        {/* --- INICIO DEL BOTÓN DE MODO DEV --- */}
+        <TouchableOpacity 
+          className="w-full rounded-xl p-4 mt-4 flex-row justify-center items-center bg-emerald-600 border border-emerald-500"
+          onPress={() => {
+            // Inyectamos una sesión falsa y una placa de prueba en Zustand
+            setSession({ access_token: 'fake-token' } as any, 'DEV-123');
+            // Saltamos directamente a las pestañas
+            router.replace('/(tabs)');
+          }}
+        >
+          <Text className="text-white text-center font-bold text-lg">Saltar Login (Modo Dev)</Text>
+        </TouchableOpacity>
+        {/* --- FIN DEL BOTÓN DE MODO DEV --- */}
+
       </View>
     </View>
   );
